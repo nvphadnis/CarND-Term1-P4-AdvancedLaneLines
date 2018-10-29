@@ -9,12 +9,12 @@ The goal of this project was to identify a drivable region in front of a car usi
 
 The 20 chess board images were used for calibrating the camera. The *cv2.findChessboardCorners* function was used to create a list of image points for a corresponding list of known object points on a flat chessboard with 9x6 corners (cell 1). These two lists were then used with the *cv2.calibrateCamera* function to generate a calibration matrix *mtx* and distortion coefficients *dist* correcting for radial distortion induced by the camera lens (cell 2).
 
-Image
+![camera_calibration_image1](/readme_images/camera_calibration_image1.jpg)
 
 Cells 2 and 3 undistort two test images that are used throughout the notebook to demonstrate all functions in the pipeline.
 
-Image
-Image
+![camera_calibration_image2](/readme_images/camera_calibration_image2.jpg)
+![camera_calibration_image3](/readme_images/camera_calibration_image3.jpg)
 
 ## Image Pipeline
 
@@ -26,7 +26,7 @@ The *image_transform* function takes a colored image and various image transform
 
 The [Sobel X OR S channel] combined binary image generated a good starting point for all test images. After playing around with their thresholds, I generated a video that was good for the most part but messed up detection over shadows. It also detected a slightly faded line along the road as the lane instead of the real lane line.  Using a [Sobel X OR S channel OR magnitude gradient] as well as a [(Sobel X OR S channel) AND magnitude gradient] combined binary seemed to increase shakiness of the lane detected over the video. I could tune the thresholds either for the light or shadowed patches on the road. All the random pixels around the lanes seemed to be interfering with the lane detection described later. Hence I thought of using the R channel binary which seemed to detect white lanes well in general and yellow lanes over normal to dark patches of the road. Using its binary as an AND i.e. using a **[(Sobel X OR S channel) AND R channel] combined binary** was most effective since it detected the few lane pixels confirmed both by the R and S channels, and eliminated all other pixels. The lack of lane pixels seemed wrong at first but the lane detection method worked because the only pixels left belonged to the lanes.
 
-Image
+![image_pipeline_image1](/readme_images/image_pipeline_image1.jpg)
 
 Cell 5 plots many more test images than provided by the repository. After the first few iterations, I handpicked the frames in [project_video.mp4](https://github.com/nvphadnis/CarND-Term1-P4-AdvancedLaneLines/blob/master/project_video.mp4) that did not have their lanes detected correctly and added them to the list of test images.
 
@@ -41,7 +41,7 @@ Source image points (src)	| Destination image points (dst)
 (695, 460) |	(960, 0)
 (585, 460)	| (320, 0)
 
-Image
+![image_pipeline_image2](/readme_images/image_pipeline_image2.jpg)
 
 Cells 7 and 8 demonstrate the perspective transformation on additional test images.
 
@@ -51,7 +51,7 @@ The *find_lanes* function borrowed the code provided in the lectures to identify
 
 Cell 10 visualizes the result of this function on a warped image with curved lanes. The red and blue patches are the pixels identified as belonging to lanes. The yellow lines are the best fit curves. The green boxes are part of the sliding windows.
 
-Image
+![image_pipeline_image3](/readme_images/image_pipeline_image3.jpg)
 
 Cell 11 contains the *find_lanes_again* function that could be used for subsequent images once the sliding window identified lanes in one image in the video. Cell 12 visualizes its result. I did not use this function in the final pipeline since the results were satisfactory without it.
 
@@ -66,7 +66,7 @@ Cell 14, containing the method I eventually used, calculates lane radius by sele
 
 This sample code took the warped image, drew the quadratic fit lane lines and colored the area between them green. It then performed an inverse perspective transform and superimposed it on the undistorted color image.
 
-Image
+![image_pipeline_image4](/readme_images/image_pipeline_image4.jpg)
 
 Cell 16 contains all steps described above in one function called *pipeline*. Some information that needed to be printed on each image was also calculated in this cell.
 - Camera position: This is the difference (in m) between the image center and the average of the mean x-positions of pixels belonging to the left and right lanes.
@@ -74,7 +74,7 @@ Cell 16 contains all steps described above in one function called *pipeline*. So
 - Turning radius: The turning radius was assumed to be the average of both radii of curvatures.
 Cell 17 tested this pipeline on all test images with success.
 
-Image
+![image_pipeline_image5](/readme_images/image_pipeline_image5.jpg)
 
 ## Video Pipeline
 
